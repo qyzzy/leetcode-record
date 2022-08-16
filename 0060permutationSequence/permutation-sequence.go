@@ -1,37 +1,35 @@
 package permutationSequence
 
-import "strconv"
-
 func getPermutation(n int, k int) string {
-	var num []string
+	nums := make([]byte, n)
 	for i := 1; i <= n; i++ {
-		num = append(num, strconv.Itoa(i))
+		nums[i-1] = byte(i + '0')
 	}
-	return permutation(num, k)
+	return string(helper(nums, k))
 }
 
-func permutation(num []string, k int) string {
-	if len(num) == 2 {
+func helper(nums []byte, k int) []byte {
+	if len(nums) == 2 {
 		if k == 1 {
-			return num[0] + num[1]
+			return nums
 		} else {
-			return num[1] + num[0]
+			nums[0], nums[1] = nums[1], nums[0]
+			return nums
 		}
 	}
-	n := len(num)
-	res := ""
 	base := 1
-	for i := 1; i <= n-1; i++ {
+	for i := 1; i < len(nums); i++ {
 		base *= i
 	}
-	for i := 0; i < len(num); i++ {
+	var res []byte
+	for i := 0; i < len(nums); i++ {
 		if k > base {
 			k -= base
 			continue
 		}
-		res += num[i]
-		num = append(num[:i], num[i+1:]...)
-		res += permutation(num, k)
+		res = append(res, nums[i])
+		nums = append(nums[:i], nums[i+1:]...)
+		res = append(res, helper(nums, k)...)
 		return res
 	}
 	return res
